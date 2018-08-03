@@ -1,5 +1,15 @@
 apply plugin: 'com.android.application'
 
+
+ext{
+    supportAppCompatVersion = '27.1.1'
+    constraintLayoutVersion = '1.1.2'
+    lifecycleVersion = "1.1.1"
+    rxJava2Version = "2.0.2"
+    gsonVersion = "2.8.2"
+    playServiceVersion = "15.0.1"
+}
+
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -16,13 +26,38 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.android.support:appcompat-v7:$supportAppCompatVersion"
+    implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
+    implementation "com.android.support:design:$supportAppCompatVersion"
+    implementation "com.android.support:recyclerview-v7:$supportAppCompatVersion"
+    implementation "com.android.support:cardview-v7:$supportAppCompatVersion"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    //Lifecycle Architecture
+    implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
+
+    //RX Java 2
+    implementation "io.reactivex.rxjava2:rxandroid:$rxJava2Version"
+    implementation 'io.reactivex.rxjava2:rxjava:2.x.x'
+
+    //Gson
+    implementation "com.google.code.gson:gson:$gsonVersion"
+
+    //Places
+    implementation "com.google.android.gms:play-services-places:$playServiceVersion"
+
+    //map
+    implementation "com.google.android.gms:play-services-maps:$playServiceVersion"
+
+    implementation "com.google.maps:google-maps-services:0.2.6"
 }
