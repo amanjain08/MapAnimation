@@ -1,13 +1,14 @@
 apply plugin: 'com.android.application'
 
 
-ext{
+ext {
     supportAppCompatVersion = '27.1.1'
     constraintLayoutVersion = '1.1.2'
     lifecycleVersion = "1.1.1"
     rxJava2Version = "2.0.2"
     gsonVersion = "2.8.2"
     playServiceVersion = "15.0.1"
+    retrofitVersion = "2.4.0"
 }
 
 android {
@@ -30,6 +31,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
 }
 
 dependencies {
@@ -58,6 +60,12 @@ dependencies {
 
     //map
     implementation "com.google.android.gms:play-services-maps:$playServiceVersion"
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
 
-    implementation "com.google.maps:google-maps-services:0.2.6"
+    //retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+
+
 }
