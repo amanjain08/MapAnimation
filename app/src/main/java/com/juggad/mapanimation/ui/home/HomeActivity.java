@@ -10,11 +10,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.juggad.mapanimation.R;
-import com.juggad.mapanimation.model.PlaceItem;
+import com.juggad.mapanimation.data.model.PlaceItem;
+import com.juggad.mapanimation.data.model.Status;
 import com.juggad.mapanimation.ui.BaseActivity;
 import com.juggad.mapanimation.ui.map.AnimatePoints;
 import com.juggad.mapanimation.ui.nearestpoints.NearestPoints;
@@ -58,10 +58,14 @@ public class HomeActivity extends BaseActivity {
             startActivity(intent);
         });
 
-        mPlaceViewModel.getAnimatePoints().observe(this, placeItems -> {
-            Intent intent = new Intent(HomeActivity.this, AnimatePoints.class);
-            intent.putParcelableArrayListExtra(Constants.ANIMATE_POINTS, placeItems);
-            startActivity(intent);
+        mPlaceViewModel.getAnimatePoints().observe(this, arrayListResource -> {
+            if (arrayListResource.status == Status.ERROR) {
+                Toast.makeText(this, arrayListResource.mError, Toast.LENGTH_SHORT).show();
+            } else if (arrayListResource.status == Status.SUCCESS) {
+                Intent intent = new Intent(HomeActivity.this, AnimatePoints.class);
+                intent.putParcelableArrayListExtra(Constants.ANIMATE_POINTS, arrayListResource.data);
+                startActivity(intent);
+            }
         });
     }
 
@@ -122,7 +126,7 @@ public class HomeActivity extends BaseActivity {
                 mPlaceViewModel.addPlaceItem(place);
 
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
-                Status status = PlaceAutocomplete.getStatus(this, data);
+                com.google.android.gms.common.api.Status status = PlaceAutocomplete.getStatus(this, data);
                 Log.i(TAG, status.getStatusMessage());
                 Toast.makeText(this, "Error: " + status, Toast.LENGTH_SHORT).show();
 

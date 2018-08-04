@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import com.juggad.mapanimation.R;
-import com.juggad.mapanimation.model.PlaceItem;
+import com.juggad.mapanimation.data.model.PlaceItem;
 import com.juggad.mapanimation.ui.home.PlaceAdapter.PlaceViewHolder;
 import java.text.DecimalFormat;
 

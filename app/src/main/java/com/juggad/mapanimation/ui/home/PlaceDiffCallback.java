@@ -1,7 +1,7 @@
 package com.juggad.mapanimation.ui.home;
 
 import android.support.v7.util.DiffUtil;
-import com.juggad.mapanimation.model.PlaceItem;
+import com.juggad.mapanimation.data.model.PlaceItem;
 
 class PlaceDiffCallback extends DiffUtil.ItemCallback<PlaceItem> {
 
