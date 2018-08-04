@@ -4,8 +4,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import com.google.android.gms.maps.model.LatLng;
-import com.juggad.mapanimation.data.model.Resource;
 import com.juggad.mapanimation.data.model.PlaceItem;
+import com.juggad.mapanimation.data.model.Resource;
 import com.juggad.mapanimation.data.repository.DirectionApiRepository;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -38,18 +38,18 @@ public class DirectionViewModel extends ViewModel {
             mApiResponseLiveData.postValue(Resource.success(""));
             return;
         }
-        LatLng origin = null, destination = null;
+
         List<LatLng> wayPoints = null;
-        if (size > 1) {
-            origin = placeItems.get(0).getLatLng();
-            destination = placeItems.get(size - 1).getLatLng();
-            if (size > 2) {
-                wayPoints = new ArrayList<>();
-                for (PlaceItem placeItem : placeItems.subList(1, size - 1)) {
-                    wayPoints.add(placeItem.getLatLng());
-                }
+        LatLng origin = placeItems.get(0).getLatLng();
+        LatLng destination = placeItems.get(size - 1).getLatLng();
+
+        if (size > 2) {
+            wayPoints = new ArrayList<>();
+            for (PlaceItem placeItem : placeItems.subList(1, size - 1)) {
+                wayPoints.add(placeItem.getLatLng());
             }
         }
+
         disposables = mDirectionApiRepository.create()
                 .getDirections(key, getLatLngString(origin), getLatLngString(destination),
                         wayPointsToString(wayPoints))
