@@ -1,4 +1,4 @@
-package com.juggad.mapanimation.model;
+package com.juggad.mapanimation.data.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

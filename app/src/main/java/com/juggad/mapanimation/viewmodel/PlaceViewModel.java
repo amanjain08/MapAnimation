@@ -4,7 +4,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import com.google.android.gms.location.places.Place;
-import com.juggad.mapanimation.model.PlaceItem;
+import com.juggad.mapanimation.data.model.PlaceItem;
+import com.juggad.mapanimation.data.model.Resource;
 import java.util.ArrayList;
 
 /**
@@ -16,7 +17,7 @@ public class PlaceViewModel extends ViewModel {
 
     private MutableLiveData<ArrayList<PlaceItem>> mNearestPoints = new MutableLiveData<>();
 
-    private MutableLiveData<ArrayList<PlaceItem>> mAnimatePoints = new MutableLiveData<>();
+    private MutableLiveData<Resource<ArrayList<PlaceItem>>> mAnimatePoints = new MutableLiveData<>();
 
     public void addPlaceItem(Place place) {
         ArrayList<PlaceItem> temp = new ArrayList<>();
@@ -46,7 +47,7 @@ public class PlaceViewModel extends ViewModel {
         return mNearestPoints;
     }
 
-    public LiveData<ArrayList<PlaceItem>> getAnimatePoints() {
+    public LiveData<Resource<ArrayList<PlaceItem>>> getAnimatePoints() {
         return mAnimatePoints;
     }
 
@@ -55,7 +56,12 @@ public class PlaceViewModel extends ViewModel {
     }
 
     public void animatePoints() {
-        mAnimatePoints.postValue(mPlacePoints.getValue());
+        ArrayList<PlaceItem> placeItems = mPlacePoints.getValue();
+        if (placeItems == null || placeItems.isEmpty()) {
+            mAnimatePoints.postValue(Resource.error("No places to show on map"));
+        } else {
+            mAnimatePoints.postValue(Resource.success(placeItems));
+        }
     }
 
     private PlaceItem mapPlaceToPlaceItem(Place place) {
