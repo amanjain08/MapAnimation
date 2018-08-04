@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">MapAnimation</string>
+    <string name="nearest_points">Nearest Points</string>
+    <string name="map">Map</string>
+    <string name="animate_on_map">Animate on Map</string>
+    <string name="home_activity">HOME SCREEN</string>
+    <string name="landmark_name_placeholder">Type a landmark name</string>
+    <string name="nearest_place_text">The following two points are nearest to each other</string>
+    <string name="MAP_KEY">AIzaSyAJVH4ZwwXNkd2PtQdlELGcbQNFTgqMyX4</string>
 </resources>
