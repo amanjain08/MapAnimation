@@ -20,8 +20,11 @@ public class PlaceAdapter extends ListAdapter<PlaceItem, PlaceViewHolder> {
 
     private DeleteButtonClickListener mDeleteButtonClickListener;
 
-    public PlaceAdapter() {
+    boolean showDeleteButton;
+
+    public PlaceAdapter(boolean showDeleteButton) {
         super(new PlaceDiffCallback());
+        this.showDeleteButton = showDeleteButton;
     }
 
     public void setDeleteButtonClickListener(
@@ -38,7 +41,7 @@ public class PlaceAdapter extends ListAdapter<PlaceItem, PlaceViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final PlaceViewHolder holder, final int position) {
-        holder.setData(getItem(position));
+        holder.setData(getItem(position), showDeleteButton);
         holder.deleteButton.setOnClickListener(v -> {
             if (mDeleteButtonClickListener != null) {
                 mDeleteButtonClickListener.onClicked(holder.getAdapterPosition());
@@ -59,8 +62,11 @@ public class PlaceAdapter extends ListAdapter<PlaceItem, PlaceViewHolder> {
             deleteButton = itemView.findViewById(R.id.delete_button);
         }
 
-        public void setData(final PlaceItem data) {
+        public void setData(final PlaceItem data, final boolean showDeleteButton) {
             mPlaceName.setText(data.getName());
+            if (showDeleteButton) {
+                deleteButton.setVisibility(View.VISIBLE);
+            }
             DecimalFormat f = new DecimalFormat("0.##");
             mLatLng.setText(String.format("%s, %s", f.format(data.getLatLng().latitude),
                     f.format(data.getLatLng().longitude)));

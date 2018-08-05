@@ -88,7 +88,7 @@ public class HomeActivity extends BaseActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mPlaceRecyclerView.setLayoutManager(layoutManager);
-        mPlaceAdapter = new PlaceAdapter();
+        mPlaceAdapter = new PlaceAdapter(true);
         mPlaceRecyclerView.setAdapter(mPlaceAdapter);
         mPlaceAdapter.submitList(mPlaceItems);
         mPlaceAdapter.setDeleteButtonClickListener(position -> {
