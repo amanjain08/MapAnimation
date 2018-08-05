@@ -76,7 +76,6 @@ public class AnimatePoints extends BaseActivity implements OnMapReadyCallback, O
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
-        showProgressDialog();
         googleMap.setOnMapLoadedCallback(this);
         try {
             // Customise the styling of the base map using a JSON object defined
@@ -92,6 +91,9 @@ public class AnimatePoints extends BaseActivity implements OnMapReadyCallback, O
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         if (mPlaceItems == null || mPlaceItems.isEmpty()) {
             return;
+        }
+        if (mPlaceItems.size() > 1) {
+            showProgressDialog();
         }
         for (PlaceItem placeItem : mPlaceItems) {
             builder.include(placeItem.getLatLng());
@@ -146,10 +148,10 @@ public class AnimatePoints extends BaseActivity implements OnMapReadyCallback, O
         TextView placeName = view.findViewById(R.id.place_name);
 
         int size = bangaloreRoute.size();
-        int duration = ((size/2+2) * 16);
+        int duration = ((size / 2 + 2) * 16);
         final AtomicInteger index = new AtomicInteger();
 
-        ValueAnimator polylineAnimator = ValueAnimator.ofInt(0, (size/2)+2);
+        ValueAnimator polylineAnimator = ValueAnimator.ofInt(0, (size / 2) + 2);
         polylineAnimator.setDuration(duration);
         polylineAnimator.setInterpolator(new LinearInterpolator());
 
