@@ -53,9 +53,14 @@ public class HomeActivity extends BaseActivity {
         });
 
         mPlaceViewModel.getNearestPoints().observe(this, places -> {
-            Intent intent = new Intent(HomeActivity.this, NearestPoints.class);
-            intent.putParcelableArrayListExtra(Constants.NEAREST_PLACES, places);
-            startActivity(intent);
+
+            if (places.status == Status.ERROR) {
+                Toast.makeText(this, places.mError, Toast.LENGTH_SHORT).show();
+            } else if (places.status == Status.SUCCESS) {
+                Intent intent = new Intent(HomeActivity.this, NearestPoints.class);
+                intent.putParcelableArrayListExtra(Constants.NEAREST_PLACES, places.data);
+                startActivity(intent);
+            }
         });
 
         mPlaceViewModel.getAnimatePoints().observe(this, arrayListResource -> {
