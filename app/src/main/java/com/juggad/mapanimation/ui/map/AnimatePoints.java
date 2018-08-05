@@ -10,7 +10,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.animation.LinearInterpolator;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -18,14 +20,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLoadedCallback;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.RoundCap;
 import com.google.maps.android.PolyUtil;
 import com.juggad.mapanimation.R;
 import com.juggad.mapanimation.data.model.PlaceItem;
@@ -33,9 +33,11 @@ import com.juggad.mapanimation.data.model.Resource;
 import com.juggad.mapanimation.data.model.Status;
 import com.juggad.mapanimation.ui.BaseActivity;
 import com.juggad.mapanimation.utils.Constants;
+import com.juggad.mapanimation.utils.Utils;
 import com.juggad.mapanimation.viewmodel.DirectionViewModel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Aman Jain on 02/08/18.
@@ -74,6 +76,7 @@ public class AnimatePoints extends BaseActivity implements OnMapReadyCallback, O
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
+        showProgressDialog();
         googleMap.setOnMapLoadedCallback(this);
         try {
             // Customise the styling of the base map using a JSON object defined
@@ -93,7 +96,7 @@ public class AnimatePoints extends BaseActivity implements OnMapReadyCallback, O
         for (PlaceItem placeItem : mPlaceItems) {
             builder.include(placeItem.getLatLng());
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 300));
     }
 
 
@@ -127,15 +130,9 @@ public class AnimatePoints extends BaseActivity implements OnMapReadyCallback, O
 
     private void decodePolyline(final Resource<String> stringResource) {
         List<LatLng> decodedLatLng = PolyUtil.decode(stringResource.data);
-        int size = decodedLatLng.size();
-
-        if (size > 0) {
-            LatLng[] latLngs = new LatLng[size];
-            for (int i = 0; i < size; i++) {
-                latLngs[i] = decodedLatLng.get(i);
-            }
-            animateRoute(mMap, decodedLatLng);
-        }
+        decodedLatLng.add(0, mPlaceItems.get(0).getLatLng());
+        decodedLatLng.add(decodedLatLng.size(), mPlaceItems.get(mPlaceItems.size() - 1).getLatLng());
+        animateRoute(mMap, decodedLatLng);
     }
 
     public void animateRoute(GoogleMap googleMap, List<LatLng> bangaloreRoute) {
@@ -143,29 +140,42 @@ public class AnimatePoints extends BaseActivity implements OnMapReadyCallback, O
         optionsForeground = new PolylineOptions().add(bangaloreRoute.get(0))
                 .color(ContextCompat.getColor(this, R.color.polylineColor)).width(10);
         foregroundPolyline = googleMap.addPolyline(optionsForeground);
-        foregroundPolyline.setEndCap(new RoundCap());
-        foregroundPolyline.setStartCap(new RoundCap());
+
+        RelativeLayout view = (RelativeLayout) LayoutInflater.from(AnimatePoints.this)
+                .inflate(R.layout.marker_view, null);
+        TextView placeName = view.findViewById(R.id.place_name);
+
         int size = bangaloreRoute.size();
-        int duration = size > 100 ? size * 10 : 1500;
-        ValueAnimator polylineAnimator = ValueAnimator.ofInt(0, size - 1);
+        int duration = ((size/2+2) * 16);
+        final AtomicInteger index = new AtomicInteger();
+
+        ValueAnimator polylineAnimator = ValueAnimator.ofInt(0, (size/2)+2);
         polylineAnimator.setDuration(duration);
         polylineAnimator.setInterpolator(new LinearInterpolator());
+
         polylineAnimator.addUpdateListener(valueAnimator -> {
-            foregroundPoints.add(bangaloreRoute.get((Integer) valueAnimator.getAnimatedValue()));
-            foregroundPolyline.setPoints(foregroundPoints);
+            if (index.get() < size) {
+                foregroundPoints.add(bangaloreRoute.get(index.getAndIncrement()));
+                foregroundPoints.add(bangaloreRoute.get(index.getAndIncrement()));
+                foregroundPolyline.setPoints(foregroundPoints);
+            }
         });
+
         polylineAnimator.addListener(new AnimatorListener() {
             @Override
             public void onAnimationStart(final Animator animation) {
+
+                placeName.setText(mPlaceItems.get(0).getName());
                 mMap.addMarker(new MarkerOptions().position(bangaloreRoute.get(0))
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_large)));
+                        .icon(Utils.createBitmapFromView(AnimatePoints.this, view)).anchor(0, 0.5f));
             }
 
             @Override
             public void onAnimationEnd(final Animator animation) {
                 for (PlaceItem placeItem : mPlaceItems.subList(1, mPlaceItems.size())) {
+                    placeName.setText(placeItem.getName());
                     mMap.addMarker(new MarkerOptions().position(placeItem.getLatLng())
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_large)).anchor(0.5f, 0.5f));
+                            .icon(Utils.createBitmapFromView(AnimatePoints.this, view)).anchor(0, 0.5f));
                 }
             }
 
