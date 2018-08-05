@@ -15,6 +15,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
  */
 public class Utils {
 
+    /**
+     * Utility method to convert View into a BitmapDescriptor for marker icon.
+     */
     public static BitmapDescriptor createBitmapFromView(Activity activity, View view) {
         if (activity == null || activity.isFinishing())
             return null;

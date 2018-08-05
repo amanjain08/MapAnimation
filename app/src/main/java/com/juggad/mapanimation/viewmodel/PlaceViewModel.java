@@ -20,6 +20,10 @@ public class PlaceViewModel extends ViewModel {
 
     private MutableLiveData<Resource<ArrayList<PlaceItem>>> mAnimatePoints = new MutableLiveData<>();
 
+    /**
+     * Adds new selected place to live data.
+     * @param place
+     */
     public void addPlaceItem(Place place) {
         ArrayList<PlaceItem> temp = new ArrayList<>();
         if (mPlacePoints.getValue() != null) {
@@ -29,6 +33,10 @@ public class PlaceViewModel extends ViewModel {
         mPlacePoints.postValue(temp);
     }
 
+    /**
+     * Delete selected place from live data
+     * @param position
+     */
     public void deletePlaceItem(int position) {
         ArrayList<PlaceItem> temp = new ArrayList<>();
         if (mPlacePoints.getValue() != null) {
@@ -52,6 +60,9 @@ public class PlaceViewModel extends ViewModel {
         return mAnimatePoints;
     }
 
+    /**
+     * Method to update nearest point live data
+     */
     public void showNearestPoint() {
         ArrayList<PlaceItem> placeItems = mPlacePoints.getValue();
         if (placeItems == null || placeItems.size() <= 1) {
@@ -62,6 +73,9 @@ public class PlaceViewModel extends ViewModel {
         }
     }
 
+    /**
+     * Calculate nearest points using brute force approach
+     */
     private ArrayList<PlaceItem> calculateNearestPoint(final ArrayList<PlaceItem> placeItems) {
         int size = placeItems.size();
         double minDistance = Double.MAX_VALUE;
@@ -85,6 +99,9 @@ public class PlaceViewModel extends ViewModel {
         return result;
     }
 
+    /**
+     * Methods to update animatePoints live data.
+     */
     public void animatePoints() {
         ArrayList<PlaceItem> placeItems = mPlacePoints.getValue();
         if (placeItems == null || placeItems.isEmpty()) {
@@ -94,6 +111,9 @@ public class PlaceViewModel extends ViewModel {
         }
     }
 
+    /**
+     * Map google Place object to PlaceItem
+     */
     private PlaceItem mapPlaceToPlaceItem(Place place) {
         return new PlaceItem(place);
     }

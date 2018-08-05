@@ -46,44 +46,9 @@ public class HomeActivity extends BaseActivity {
         observeViewModel();
     }
 
-    private void observeViewModel() {
-
-        mPlaceViewModel.getPlaceLiveData().observe(this, places -> {
-            mPlaceAdapter.submitList(places);
-        });
-
-        mPlaceViewModel.getNearestPoints().observe(this, places -> {
-
-            if (places.status == Status.ERROR) {
-                Toast.makeText(this, places.mError, Toast.LENGTH_SHORT).show();
-            } else if (places.status == Status.SUCCESS) {
-                Intent intent = new Intent(HomeActivity.this, NearestPoints.class);
-                intent.putParcelableArrayListExtra(Constants.NEAREST_PLACES, places.data);
-                startActivity(intent);
-            }
-        });
-
-        mPlaceViewModel.getAnimatePoints().observe(this, arrayListResource -> {
-            if (arrayListResource.status == Status.ERROR) {
-                Toast.makeText(this, arrayListResource.mError, Toast.LENGTH_SHORT).show();
-            } else if (arrayListResource.status == Status.SUCCESS) {
-                Intent intent = new Intent(HomeActivity.this, AnimatePoints.class);
-                intent.putParcelableArrayListExtra(Constants.ANIMATE_POINTS, arrayListResource.data);
-                startActivity(intent);
-            }
-        });
-    }
-
-    @Override
-    protected void setToolbarTitle(final TextView toolbarTitleTextView) {
-        toolbarTitleTextView.setText(R.string.home_activity);
-    }
-
-    @Override
-    protected boolean showBackButton() {
-        return false;
-    }
-
+    /**
+     * Initialize views
+     */
     private void initView() {
         initToolbar();
         initRecyclerView();
@@ -108,6 +73,16 @@ public class HomeActivity extends BaseActivity {
         findViewById(R.id.animate_points).setOnClickListener(v -> mPlaceViewModel.animatePoints());
     }
 
+    @Override
+    protected void setToolbarTitle(final TextView toolbarTitleTextView) {
+        toolbarTitleTextView.setText(R.string.home_activity);
+    }
+
+    @Override
+    protected boolean showBackButton() {
+        return false;
+    }
+
     private void initRecyclerView() {
         mPlaceRecyclerView = findViewById(R.id.place_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -121,6 +96,39 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Observe live data for changes
+     */
+    private void observeViewModel() {
+
+        mPlaceViewModel.getPlaceLiveData().observe(this, places -> {
+            mPlaceAdapter.submitList(places);
+        });
+
+        mPlaceViewModel.getNearestPoints().observe(this, places -> {
+            if (places.status == Status.ERROR) {
+                Toast.makeText(this, places.mError, Toast.LENGTH_SHORT).show();
+            } else if (places.status == Status.SUCCESS) {
+                Intent intent = new Intent(HomeActivity.this, NearestPoints.class);
+                intent.putParcelableArrayListExtra(Constants.NEAREST_PLACES, places.data);
+                startActivity(intent);
+            }
+        });
+
+        mPlaceViewModel.getAnimatePoints().observe(this, arrayListResource -> {
+            if (arrayListResource.status == Status.ERROR) {
+                Toast.makeText(this, arrayListResource.mError, Toast.LENGTH_SHORT).show();
+            } else if (arrayListResource.status == Status.SUCCESS) {
+                Intent intent = new Intent(HomeActivity.this, AnimatePoints.class);
+                intent.putParcelableArrayListExtra(Constants.ANIMATE_POINTS, arrayListResource.data);
+                startActivity(intent);
+            }
+        });
+    }
+
+    /**
+     * Receive place autocomplete result
+     */
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

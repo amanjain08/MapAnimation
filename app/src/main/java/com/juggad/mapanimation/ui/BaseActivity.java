@@ -13,6 +13,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     TextView titleTextView;
 
+    /**
+     * Call this method to initialize toolbar
+     */
     public void initToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         titleTextView = findViewById(R.id.title);
@@ -25,8 +28,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Override this method to set toolbar title
+     */
     protected abstract void setToolbarTitle(TextView toolbarTitleTextView);
 
+    /**
+     * Override this method to toggle the visibility of back button. By default, back button is hidden.
+     * @return
+     */
     protected abstract boolean showBackButton();
 
     @Override

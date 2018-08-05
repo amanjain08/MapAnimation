@@ -32,6 +32,9 @@ public class DirectionViewModel extends ViewModel {
         return mApiResponseLiveData;
     }
 
+    /**
+     * Method to fetch Directions between different points using google direction API.
+     */
     public void getDirections(String key, List<PlaceItem> placeItems) {
         int size = placeItems.size();
         if (size <= 1) {
@@ -43,6 +46,7 @@ public class DirectionViewModel extends ViewModel {
         LatLng origin = placeItems.get(0).getLatLng();
         LatLng destination = placeItems.get(size - 1).getLatLng();
 
+        //Add all points as waypoint except first and last point.
         if (size > 2) {
             wayPoints = new ArrayList<>();
             for (PlaceItem placeItem : placeItems.subList(1, size - 1)) {
@@ -61,10 +65,16 @@ public class DirectionViewModel extends ViewModel {
                         throwable -> mApiResponseLiveData.postValue(Resource.error(throwable.getMessage())));
     }
 
+    /**
+     * Utility method to convert latlng to string
+     */
     private String getLatLngString(final LatLng latLng) {
         return latLng.latitude + "," + latLng.longitude;
     }
 
+    /**
+     * Utility method to convert list of waypoints to string
+     */
     private String wayPointsToString(List<LatLng> wayPoints) {
         if (wayPoints != null && !wayPoints.isEmpty()) {
             StringBuilder string = new StringBuilder("");

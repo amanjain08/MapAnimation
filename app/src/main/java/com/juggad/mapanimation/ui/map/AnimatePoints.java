@@ -52,10 +52,6 @@ public class AnimatePoints extends BaseActivity implements OnMapReadyCallback, O
 
     GoogleMap mMap;
 
-    private Polyline foregroundPolyline;
-
-    private PolylineOptions optionsForeground;
-
     ProgressDialog mProgressDialog;
 
     @Override
@@ -88,13 +84,17 @@ public class AnimatePoints extends BaseActivity implements OnMapReadyCallback, O
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, "Can't find style.", e);
         }
+
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         if (mPlaceItems == null || mPlaceItems.isEmpty()) {
             return;
         }
+
         if (mPlaceItems.size() > 1) {
             showProgressDialog();
         }
+
+        //Bound camera to all the place items
         for (PlaceItem placeItem : mPlaceItems) {
             builder.include(placeItem.getLatLng());
         }
@@ -116,13 +116,16 @@ public class AnimatePoints extends BaseActivity implements OnMapReadyCallback, O
         }
     }
 
+    /**
+     * Observe live data
+     */
     private void observeViewModel() {
         mDirectionViewModel.getDirectionApiResponse().observe(this, stringResource -> {
             if (stringResource.status == Status.LOADING) {
                 showProgressDialog();
             } else if (stringResource.status == Status.SUCCESS) {
                 hideProgressDialog();
-                decodePolyline(stringResource);
+                animateRoute(mMap, decodePolyline(stringResource));
             } else if (stringResource.status == Status.ERROR) {
                 hideProgressDialog();
                 Toast.makeText(this, "Error Occured: " + stringResource.mError, Toast.LENGTH_SHORT).show();
@@ -130,18 +133,26 @@ public class AnimatePoints extends BaseActivity implements OnMapReadyCallback, O
         });
     }
 
-    private void decodePolyline(final Resource<String> stringResource) {
+    /**
+     * Decode polyline into latlnt list from encoded string.
+     */
+    private List<LatLng> decodePolyline(final Resource<String> stringResource) {
         List<LatLng> decodedLatLng = PolyUtil.decode(stringResource.data);
         decodedLatLng.add(0, mPlaceItems.get(0).getLatLng());
         decodedLatLng.add(decodedLatLng.size(), mPlaceItems.get(mPlaceItems.size() - 1).getLatLng());
-        animateRoute(mMap, decodedLatLng);
+        return decodedLatLng;
     }
 
+    /**
+     * Animate polyline and add markers to all the placeitems
+     */
     public void animateRoute(GoogleMap googleMap, List<LatLng> bangaloreRoute) {
         List<LatLng> foregroundPoints = new ArrayList<>();
-        optionsForeground = new PolylineOptions().add(bangaloreRoute.get(0))
+
+        final PolylineOptions optionsForeground = new PolylineOptions().add(bangaloreRoute.get(0))
                 .color(ContextCompat.getColor(this, R.color.polylineColor)).width(10);
-        foregroundPolyline = googleMap.addPolyline(optionsForeground);
+
+        Polyline foregroundPolyline = googleMap.addPolyline(optionsForeground);
 
         RelativeLayout view = (RelativeLayout) LayoutInflater.from(AnimatePoints.this)
                 .inflate(R.layout.marker_view, null);
@@ -205,6 +216,9 @@ public class AnimatePoints extends BaseActivity implements OnMapReadyCallback, O
         return true;
     }
 
+    /**
+     * Show progress dialog
+     */
     private void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
@@ -213,11 +227,12 @@ public class AnimatePoints extends BaseActivity implements OnMapReadyCallback, O
         mProgressDialog.show();
     }
 
+    /**
+     * Hide progress dialog
+     */
     private void hideProgressDialog() {
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
         }
     }
-
-
 }
