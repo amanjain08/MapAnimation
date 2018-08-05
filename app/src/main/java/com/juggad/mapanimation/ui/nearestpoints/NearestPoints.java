@@ -50,7 +50,7 @@ public class NearestPoints extends BaseActivity {
     }
 
     private void initRecyclerView() {
-        mNearestPointRecyclerView = findViewById(R.id.place_recycler_view);
+        mNearestPointRecyclerView = findViewById(R.id.nearest_place_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mNearestPointRecyclerView.setLayoutManager(layoutManager);
